@@ -76,7 +76,11 @@ jobs:
             file \
             libssl-dev \
             libgtk-3-dev \
-            cmake
+            cmake \
+            libcurl4-openssl-dev \
+            libsasl2-dev \
+            zlib1g-dev \
+            libzstd-dev
 
       # cmake is preinstalled on macOS/Windows GitHub runners; ensure it exists.
       - name: Verify cmake (macOS/Windows)
