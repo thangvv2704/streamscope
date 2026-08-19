@@ -41,15 +41,14 @@ consumer lag. No cloud account, no data leaves your machine.
 **Option B — Build from source**
 
 Requirements: [Node.js](https://nodejs.org) + [pnpm](https://pnpm.io),
-[Rust](https://rustup.rs), and **librdkafka**.
+[Rust](https://rustup.rs), and **CMake** (librdkafka builds from source, so no
+system Kafka library is needed).
 
 ```bash
-# 1. Install librdkafka
-#    macOS:
-brew install librdkafka
-#    Ubuntu/Debian:
-sudo apt-get install -y librdkafka-dev
-#    Windows: use vcpkg  ->  vcpkg install librdkafka
+# 1. Install CMake
+#    macOS:   brew install cmake
+#    Ubuntu:  sudo apt-get install -y cmake build-essential
+#    Windows: winget install Kitware.CMake
 
 # 2. Clone & install
 git clone https://github.com/thangvv2704/streamscope.git
@@ -57,7 +56,6 @@ cd streamscope
 pnpm install
 
 # 3. Run (dev)
-export PKG_CONFIG_PATH="/opt/homebrew/opt/librdkafka/lib/pkgconfig:$PKG_CONFIG_PATH"  # macOS only
 pnpm tauri dev
 
 # 4. Build a distributable app
@@ -98,15 +96,14 @@ trễ (lag) của consumer. Không cần tài khoản cloud, dữ liệu không 
 **Cách B — Tự build từ mã nguồn**
 
 Cần: [Node.js](https://nodejs.org) + [pnpm](https://pnpm.io),
-[Rust](https://rustup.rs), và **librdkafka**.
+[Rust](https://rustup.rs), và **CMake** (librdkafka được build từ nguồn nên
+không cần cài thư viện Kafka hệ thống).
 
 ```bash
-# 1. Cài librdkafka
-#    macOS:
-brew install librdkafka
-#    Ubuntu/Debian:
-sudo apt-get install -y librdkafka-dev
-#    Windows: dùng vcpkg  ->  vcpkg install librdkafka
+# 1. Cài CMake
+#    macOS:   brew install cmake
+#    Ubuntu:  sudo apt-get install -y cmake build-essential
+#    Windows: winget install Kitware.CMake
 
 # 2. Clone & cài dependency
 git clone https://github.com/thangvv2704/streamscope.git
@@ -114,7 +111,6 @@ cd streamscope
 pnpm install
 
 # 3. Chạy thử (dev)
-export PKG_CONFIG_PATH="/opt/homebrew/opt/librdkafka/lib/pkgconfig:$PKG_CONFIG_PATH"  # chỉ macOS
 pnpm tauri dev
 
 # 4. Đóng gói app để phân phối
@@ -155,15 +151,13 @@ lag consumer group · giao diện sáng / tối.
 **方式 B — 从源码构建**
 
 需要：[Node.js](https://nodejs.org) + [pnpm](https://pnpm.io)、
-[Rust](https://rustup.rs) 和 **librdkafka**。
+[Rust](https://rustup.rs) 和 **CMake**（librdkafka 从源码构建，无需安装系统 Kafka 库）。
 
 ```bash
-# 1. 安装 librdkafka
-#    macOS：
-brew install librdkafka
-#    Ubuntu/Debian：
-sudo apt-get install -y librdkafka-dev
-#    Windows：使用 vcpkg  ->  vcpkg install librdkafka
+# 1. 安装 CMake
+#    macOS：  brew install cmake
+#    Ubuntu： sudo apt-get install -y cmake build-essential
+#    Windows：winget install Kitware.CMake
 
 # 2. 克隆并安装依赖
 git clone https://github.com/thangvv2704/streamscope.git
@@ -171,7 +165,6 @@ cd streamscope
 pnpm install
 
 # 3. 运行（开发模式）
-export PKG_CONFIG_PATH="/opt/homebrew/opt/librdkafka/lib/pkgconfig:$PKG_CONFIG_PATH"  # 仅 macOS
 pnpm tauri dev
 
 # 4. 构建可分发的应用

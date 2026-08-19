@@ -27,9 +27,11 @@ serde_json = "1"
 tokio = { version = "1", features = ["full"] }
 async-trait = "0.1"
 
-# Kafka client — link against the system librdkafka installed via Homebrew
-# (no cmake / source build needed).
-rdkafka = { version = "0.36", features = ["dynamic-linking"] }
+# Kafka client. `cmake-build` compiles librdkafka from source so the binary is
+# self-contained and portable across macOS / Windows / Linux CI (requires cmake,
+# which is preinstalled on GitHub runners). For fast local dev on macOS you can
+# instead use features = ["dynamic-linking"] with `brew install librdkafka`.
+rdkafka = { version = "0.36", features = ["cmake-build", "ssl-vendored"] }
 
 # Error handling
 thiserror = "1"
