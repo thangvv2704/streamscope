@@ -1065,6 +1065,33 @@ code {
   white-space: nowrap;
 }
 
+/* Live tail toggle */
+.live-toggle {
+  gap: 6px;
+}
+.live-toggle .live-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--text-faint);
+  transition: background var(--t-fast), box-shadow var(--t-fast);
+}
+.live-toggle.on {
+  color: var(--green);
+  border-color: color-mix(in srgb, var(--green) 40%, transparent);
+  background: color-mix(in srgb, var(--green) 12%, transparent);
+}
+.live-toggle.on .live-dot {
+  background: var(--green);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--green) 25%, transparent);
+  animation: pulse 1.4s ease-in-out infinite;
+}
+@keyframes pulse {
+  50% {
+    opacity: 0.5;
+  }
+}
+
 /* ---------- Message table ---------- */
 .messages {
   flex: 1;

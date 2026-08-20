@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { Message, StartPosition } from "../api/types";
 import { CopyIcon, InfoIcon, PlusIcon, ReplayIcon, SearchIcon } from "./Icons";
 import { ContextMenu, MenuItem } from "./ContextMenu";
@@ -44,11 +44,22 @@ export function MessageViewer(props: {
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
   const [copied, setCopied] = useState<string | null>(null);
+  const [live, setLive] = useState(false);
   const [menu, setMenu] = useState<{
     x: number;
     y: number;
     msg: Message;
   } | null>(null);
+
+  // Live tail: re-run the search on an interval while enabled. Uses a ref to the
+  // latest onRefresh so the interval never captures a stale closure.
+  const refreshRef = useRef(props.onRefresh);
+  refreshRef.current = props.onRefresh;
+  useEffect(() => {
+    if (!live) return;
+    const t = setInterval(() => refreshRef.current(), 2000);
+    return () => clearInterval(t);
+  }, [live]);
 
   const fmtTime = (ms: number | null) =>
     ms ? new Date(ms).toLocaleString() : "—";
@@ -176,6 +187,15 @@ export function MessageViewer(props: {
           <InfoIcon size={15} />
         </button>
         <div className="spacer" />
+        <button
+          className={live ? "live-toggle on" : "live-toggle"}
+          onClick={() => setLive((v) => !v)}
+          title="Auto-refresh every 2s (live tail)"
+          style={{ height: 28 }}
+        >
+          <span className="live-dot" />
+          Live
+        </button>
         {shown.length > 0 && (
           <>
             <button
