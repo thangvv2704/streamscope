@@ -11,6 +11,7 @@ use tokio::sync::Mutex;
 
 use crate::connector::kafka::KafkaConnector;
 use crate::connector::model::*;
+use crate::connector::rabbitmq::RabbitMqConnector;
 use crate::connector::redis::RedisConnector;
 use crate::connector::{Connector, ConnectorError, ConnectorResult};
 
@@ -36,6 +37,7 @@ fn build_connector(config: ConnectionConfig) -> ConnectorResult<Arc<dyn Connecto
     match config.protocol {
         Protocol::Kafka => Ok(Arc::new(KafkaConnector::new(config))),
         Protocol::Redis => Ok(Arc::new(RedisConnector::new(config)?)),
+        Protocol::Rabbitmq => Ok(Arc::new(RabbitMqConnector::new(config)?)),
         other => Err(ConnectorError::Unsupported(format!(
             "{:?} connector (coming soon)",
             other

@@ -7,6 +7,7 @@
 
 pub mod kafka;
 pub mod model;
+pub mod rabbitmq;
 pub mod redis;
 pub mod schema;
 

@@ -77,9 +77,7 @@ export function ConnectionModal(props: {
           >
             <option value="kafka">Kafka</option>
             <option value="redis">Redis</option>
-            <option value="rabbitmq" disabled>
-              RabbitMQ (coming soon)
-            </option>
+            <option value="rabbitmq">RabbitMQ</option>
             <option value="nats" disabled>
               NATS (coming soon)
             </option>
@@ -88,7 +86,7 @@ export function ConnectionModal(props: {
 
         <div className="field">
           <label>
-            {protocol === "redis" ? "Host" : "Bootstrap servers"}
+            {protocol === "kafka" ? "Bootstrap servers" : "Host"}
           </label>
           <input
             value={bootstrap}
@@ -96,6 +94,8 @@ export function ConnectionModal(props: {
             placeholder={
               protocol === "redis"
                 ? "localhost:6379"
+                : protocol === "rabbitmq"
+                ? "localhost:15672 (management API)"
                 : "host:9092,host2:9092"
             }
           />
