@@ -11,7 +11,7 @@ Fast · native · beautiful · local-first — think *TablePlus, but for Kafka*.
 [![License](https://img.shields.io/github/license/thangvv2704/streamscope?color=f0883e)](./LICENSE)
 [![Build](https://github.com/thangvv2704/streamscope/actions/workflows/release.yml/badge.svg)](https://github.com/thangvv2704/streamscope/actions)
 
-[English](#-english) · [Tiếng Việt](#-tiếng-việt) · [中文](#-中文) · [⬇ Download](https://github.com/thangvv2704/streamscope/releases)
+[English](#-english) · [中文](#-中文) · [⬇ Download](https://github.com/thangvv2704/streamscope/releases)
 
 <br/>
 
@@ -82,61 +82,6 @@ Multiple connections (SASL/SSL) · **Kafka & Redis** (RabbitMQ/NATS coming) ·
 topic/key search & favorites · message viewer with JSON syntax highlighting ·
 Avro / JSON / Protobuf decode · produce, replay & templates · consumer-group lag ·
 dark / light themes.
-
----
-
-## 🇻🇳 Tiếng Việt
-
-### StreamScope là gì?
-
-Ứng dụng desktop nhanh, gọn để làm việc với Apache Kafka: xem topic, đọc & lọc
-message (JSON tô màu + giải mã Avro/JSON-Schema), gửi & phát lại message, xem độ
-trễ (lag) của consumer. Không cần tài khoản cloud, dữ liệu không rời khỏi máy bạn.
-
-### Cài đặt (đơn giản nhất)
-
-**Cách A — Tải app về dùng (khuyên dùng)**
-
-1. Vào trang [Releases](https://github.com/thangvv2704/streamscope/releases).
-2. Tải file theo hệ điều hành của bạn:
-   - **macOS** → `.dmg`
-   - **Windows** → `.msi` hoặc `.exe`
-   - **Linux** → `.AppImage` hoặc `.deb`
-3. Mở file: kéo StreamScope vào Applications (macOS) hoặc chạy trình cài đặt.
-4. Mở **StreamScope**, bấm **+**, nhập broker (vd `localhost:9092`), bấm **Test**,
-   rồi **Save & Connect**. Xong! 🎉
-
-> Lưu ý macOS: lần đầu mở, nếu báo chặn thì chuột phải vào app → **Open** để bỏ qua
-> Gatekeeper (khi bản build chưa được notarize).
-
-**Cách B — Tự build từ mã nguồn**
-
-Cần: [Node.js](https://nodejs.org) + [pnpm](https://pnpm.io),
-[Rust](https://rustup.rs), và **CMake** (librdkafka được build từ nguồn nên
-không cần cài thư viện Kafka hệ thống).
-
-```bash
-# 1. Cài CMake
-#    macOS:   brew install cmake
-#    Ubuntu:  sudo apt-get install -y cmake build-essential
-#    Windows: winget install Kitware.CMake
-
-# 2. Clone & cài dependency
-git clone https://github.com/thangvv2704/streamscope.git
-cd streamscope
-pnpm install
-
-# 3. Chạy thử (dev)
-pnpm tauri dev
-
-# 4. Đóng gói app để phân phối
-pnpm tauri build
-```
-
-### Tính năng
-Nhiều kết nối (SASL/SSL) · tìm topic & đánh dấu yêu thích · xem message với JSON
-tô màu · giải mã Avro / JSON / Protobuf · gửi, phát lại & lưu template message · xem
-lag consumer group · giao diện sáng / tối.
 
 ---
 
