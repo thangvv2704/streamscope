@@ -77,9 +77,10 @@ docker compose -f docker-compose.dev.yml up -d   # or: docker-compose -f ...
 ```
 
 ### Features
-Multiple connections (SASL/SSL) · topic search & favorites · message viewer with
-JSON syntax highlighting · Avro / JSON-Schema decode · produce, replay & templates
-· consumer-group lag · dark / light themes.
+Multiple connections (SASL/SSL) · **Kafka & Redis** (RabbitMQ/NATS coming) ·
+topic/key search & favorites · message viewer with JSON syntax highlighting ·
+Avro / JSON-Schema decode · produce, replay & templates · consumer-group lag ·
+dark / light themes.
 
 ---
 

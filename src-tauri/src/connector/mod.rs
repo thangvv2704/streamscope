@@ -7,6 +7,7 @@
 
 pub mod kafka;
 pub mod model;
+pub mod redis;
 pub mod schema;
 
 use async_trait::async_trait;

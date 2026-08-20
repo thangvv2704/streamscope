@@ -11,6 +11,7 @@ use tokio::sync::Mutex;
 
 use crate::connector::kafka::KafkaConnector;
 use crate::connector::model::*;
+use crate::connector::redis::RedisConnector;
 use crate::connector::{Connector, ConnectorError, ConnectorResult};
 
 /// Registry of live connections, shared across commands.
@@ -34,6 +35,7 @@ impl AppState {
 fn build_connector(config: ConnectionConfig) -> ConnectorResult<Arc<dyn Connector>> {
     match config.protocol {
         Protocol::Kafka => Ok(Arc::new(KafkaConnector::new(config))),
+        Protocol::Redis => Ok(Arc::new(RedisConnector::new(config)?)),
         other => Err(ConnectorError::Unsupported(format!(
             "{:?} connector (coming soon)",
             other

@@ -76,9 +76,7 @@ export function ConnectionModal(props: {
             onChange={(e) => setProtocol(e.target.value as Protocol)}
           >
             <option value="kafka">Kafka</option>
-            <option value="redis" disabled>
-              Redis (coming soon)
-            </option>
+            <option value="redis">Redis</option>
             <option value="rabbitmq" disabled>
               RabbitMQ (coming soon)
             </option>
@@ -89,11 +87,17 @@ export function ConnectionModal(props: {
         </div>
 
         <div className="field">
-          <label>Bootstrap servers</label>
+          <label>
+            {protocol === "redis" ? "Host" : "Bootstrap servers"}
+          </label>
           <input
             value={bootstrap}
             onChange={(e) => setBootstrap(e.target.value)}
-            placeholder="host:9092,host2:9092"
+            placeholder={
+              protocol === "redis"
+                ? "localhost:6379"
+                : "host:9092,host2:9092"
+            }
           />
         </div>
 

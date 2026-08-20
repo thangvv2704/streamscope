@@ -42,3 +42,6 @@ uuid = { version = "1", features = ["v4", "serde"] }
 # Schema Registry: HTTP client to fetch schemas, and Avro decoding.
 reqwest = { version = "0.12", features = ["json", "blocking", "rustls-tls"], default-features = false }
 apache-avro = "0.17"
+
+# Redis connector (second protocol via the same Connector trait).
+redis = { version = "0.27", features = ["tokio-comp", "tokio-rustls-comp"] }
