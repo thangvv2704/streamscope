@@ -6,9 +6,15 @@
 
 Fast · native · beautiful · local-first — think *TablePlus, but for Kafka*.
 
-[English](#-english) · [Tiếng Việt](#-tiếng-việt) · [中文](#-中文)
+[![Release](https://img.shields.io/github/v/release/thangvv2704/streamscope?color=f0883e)](https://github.com/thangvv2704/streamscope/releases)
+[![Downloads](https://img.shields.io/github/downloads/thangvv2704/streamscope/total?color=f0883e)](https://github.com/thangvv2704/streamscope/releases)
+[![License](https://img.shields.io/github/license/thangvv2704/streamscope?color=f0883e)](./LICENSE)
+[![Build](https://github.com/thangvv2704/streamscope/actions/workflows/release.yml/badge.svg)](https://github.com/thangvv2704/streamscope/actions)
 
-📦 Repo: https://github.com/thangvv2704/streamscope
+[English](#-english) · [Tiếng Việt](#-tiếng-việt) · [中文](#-中文) · [⬇ Download](https://github.com/thangvv2704/streamscope/releases)
+
+<!-- Add a screenshot/GIF here for maximum impact:
+     ![StreamScope](docs/screenshot.png) -->
 
 </div>
 
@@ -60,6 +66,14 @@ pnpm tauri dev
 
 # 4. Build a distributable app
 pnpm tauri build
+```
+
+### Try it with a local Kafka
+
+No cluster handy? Spin one up with Docker and connect to `localhost:9092`:
+
+```bash
+docker compose -f docker-compose.dev.yml up -d   # or: docker-compose -f ...
 ```
 
 ### Features
