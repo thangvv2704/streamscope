@@ -13,7 +13,7 @@ Fast · native · beautiful · local-first — think *TablePlus, but for Kafka*.
 
 [English](#-english) · [Tiếng Việt](#-tiếng-việt) · [中文](#-中文) · [⬇ Download](https://github.com/thangvv2704/streamscope/releases)
 
-<!-- Add a screenshot/GIF here for maximum impact:
+<!-- Add a screenshot once captured (see docs/README.md for tips):
      ![StreamScope](docs/screenshot.png) -->
 
 </div>
