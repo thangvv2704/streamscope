@@ -79,7 +79,7 @@ docker compose -f docker-compose.dev.yml up -d   # or: docker-compose -f ...
 ### Features
 Multiple connections (SASL/SSL) · **Kafka & Redis** (RabbitMQ/NATS coming) ·
 topic/key search & favorites · message viewer with JSON syntax highlighting ·
-Avro / JSON-Schema decode · produce, replay & templates · consumer-group lag ·
+Avro / JSON / Protobuf decode · produce, replay & templates · consumer-group lag ·
 dark / light themes.
 
 ---
@@ -134,7 +134,7 @@ pnpm tauri build
 
 ### Tính năng
 Nhiều kết nối (SASL/SSL) · tìm topic & đánh dấu yêu thích · xem message với JSON
-tô màu · giải mã Avro / JSON-Schema · gửi, phát lại & lưu template message · xem
+tô màu · giải mã Avro / JSON / Protobuf · gửi, phát lại & lưu template message · xem
 lag consumer group · giao diện sáng / tối.
 
 ---
@@ -187,7 +187,7 @@ pnpm tauri build
 ```
 
 ### 功能
-多连接（SASL/SSL）· topic 搜索与收藏 · 带 JSON 语法高亮的消息查看 · Avro / JSON-Schema
+多连接（SASL/SSL）· topic 搜索与收藏 · 带 JSON 语法高亮的消息查看 · Avro / JSON / Protobuf
 解码 · 发送、重放与消息模板 · 消费者组 lag · 深色 / 浅色主题。
 
 ---

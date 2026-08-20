@@ -103,7 +103,7 @@ impl SchemaRegistry {
             "AVRO" => decode_avro(&schema.schema, payload),
             // JSON Schema payloads are just JSON after the header.
             "JSON" => String::from_utf8(payload.to_vec()).ok(),
-            // Protobuf needs the .proto descriptors; show raw for now.
+            "PROTOBUF" => decode_protobuf(&schema.schema, payload),
             _ => None,
         };
 
@@ -112,6 +112,146 @@ impl SchemaRegistry {
             value,
         })
     }
+}
+
+/// Strip the Confluent protobuf "message index" that precedes the payload.
+/// Format: a varint count N, then N varint indexes. The common case is a single
+/// zero byte (meaning "the first message"), which we fast-path.
+fn strip_message_index(payload: &[u8]) -> &[u8] {
+    if payload.is_empty() {
+        return payload;
+    }
+    if payload[0] == 0x00 {
+        // Single-message fast path: one 0x00 byte, rest is the protobuf.
+        return &payload[1..];
+    }
+    // General case: read count, then skip that many varints.
+    let mut pos = 0usize;
+    let (count, adv) = read_varint(&payload[pos..]);
+    pos += adv;
+    for _ in 0..count {
+        let (_v, adv) = read_varint(&payload[pos..]);
+        pos += adv;
+        if pos >= payload.len() {
+            break;
+        }
+    }
+    &payload[pos.min(payload.len())..]
+}
+
+fn read_varint(buf: &[u8]) -> (u64, usize) {
+    let mut result: u64 = 0;
+    let mut shift = 0;
+    let mut i = 0;
+    while i < buf.len() {
+        let b = buf[i];
+        result |= ((b & 0x7f) as u64) << shift;
+        i += 1;
+        if b & 0x80 == 0 {
+            break;
+        }
+        shift += 7;
+    }
+    (result, i)
+}
+
+/// Decode a Confluent-framed protobuf payload to JSON using its .proto schema.
+fn decode_protobuf(schema_str: &str, payload: &[u8]) -> Option<String> {
+    use protofish::context::Context;
+    use protofish::decode::Value as PValue;
+
+    let ctx = Context::parse(&[schema_str]).ok()?;
+
+    // Find the first `message X` name in the schema text (Confluent's default
+    // encodes the first top-level message unless a message index says otherwise).
+    let msg_name = first_message_name(schema_str)?;
+    let msg = ctx
+        .get_message(&msg_name)
+        .or_else(|| {
+            // Try with a package prefix if present.
+            first_package_name(schema_str)
+                .and_then(|pkg| ctx.get_message(&format!("{}.{}", pkg, msg_name)))
+        })?;
+
+    let body = strip_message_index(payload);
+    let decoded = msg.decode(body, &ctx);
+
+    fn field_to_json(v: &PValue, ctx: &Context) -> serde_json::Value {
+        use serde_json::Value as J;
+        match v {
+            PValue::Double(x) => {
+                serde_json::Number::from_f64(*x).map(J::Number).unwrap_or(J::Null)
+            }
+            PValue::Float(x) => serde_json::Number::from_f64(*x as f64)
+                .map(J::Number)
+                .unwrap_or(J::Null),
+            PValue::Int32(x) | PValue::SFixed32(x) | PValue::SInt32(x) => J::from(*x),
+            PValue::Int64(x) | PValue::SFixed64(x) | PValue::SInt64(x) => J::from(*x),
+            PValue::UInt32(x) | PValue::Fixed32(x) => J::from(*x),
+            PValue::UInt64(x) | PValue::Fixed64(x) => J::from(*x),
+            PValue::Bool(b) => J::Bool(*b),
+            PValue::String(s) => J::String(s.clone()),
+            PValue::Bytes(b) => J::String(String::from_utf8_lossy(b).to_string()),
+            PValue::Enum(e) => J::from(e.value),
+            PValue::Message(m) => {
+                let info = ctx.resolve_message(m.msg_ref);
+                let mut obj = serde_json::Map::new();
+                for f in &m.fields {
+                    let name = info
+                        .get_field(f.number)
+                        .map(|fd| fd.name.clone())
+                        .unwrap_or_else(|| f.number.to_string());
+                    obj.insert(name, field_to_json(&f.value, ctx));
+                }
+                J::Object(obj)
+            }
+            other => J::String(format!("{:?}", other)),
+        }
+    }
+
+    let mut obj = serde_json::Map::new();
+    for f in &decoded.fields {
+        let name = msg
+            .get_field(f.number)
+            .map(|fd| fd.name.clone())
+            .unwrap_or_else(|| f.number.to_string());
+        obj.insert(name, field_to_json(&f.value, &ctx));
+    }
+    serde_json::to_string_pretty(&serde_json::Value::Object(obj)).ok()
+}
+
+/// Extract the first `message Name` from .proto text.
+fn first_message_name(schema: &str) -> Option<String> {
+    for line in schema.lines() {
+        let t = line.trim();
+        if let Some(rest) = t.strip_prefix("message ") {
+            let name: String = rest
+                .chars()
+                .take_while(|c| c.is_alphanumeric() || *c == '_')
+                .collect();
+            if !name.is_empty() {
+                return Some(name);
+            }
+        }
+    }
+    None
+}
+
+/// Extract the `package X;` name from .proto text, if any.
+fn first_package_name(schema: &str) -> Option<String> {
+    for line in schema.lines() {
+        let t = line.trim();
+        if let Some(rest) = t.strip_prefix("package ") {
+            let name: String = rest
+                .chars()
+                .take_while(|c| c.is_alphanumeric() || *c == '_' || *c == '.')
+                .collect();
+            if !name.is_empty() {
+                return Some(name);
+            }
+        }
+    }
+    None
 }
 
 /// Decode an Avro-binary payload to pretty JSON using its writer schema.
