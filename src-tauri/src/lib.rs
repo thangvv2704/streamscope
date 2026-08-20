@@ -22,6 +22,7 @@ pub fn run() {
             commands::produce,
             commands::list_consumer_groups,
             commands::group_offsets,
+            commands::reset_group_offset,
             commands::create_stream,
             commands::delete_stream,
         ])

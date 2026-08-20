@@ -84,6 +84,16 @@ pub trait Connector: Send + Sync {
         Err(ConnectorError::Unsupported("group offsets".to_string()))
     }
 
+    /// Reset a consumer group's committed offsets to the earliest or latest
+    /// position across all partitions of all user topics.
+    async fn reset_group_offset(
+        &self,
+        _group: &str,
+        _to_earliest: bool,
+    ) -> ConnectorResult<()> {
+        Err(ConnectorError::Unsupported("reset group offset".to_string()))
+    }
+
     /// Publish a message. Optional — some read-only setups won't allow it.
     async fn produce(&self, _stream: &str, _msg: &OutgoingMessage) -> ConnectorResult<()> {
         Err(ConnectorError::Unsupported("produce".to_string()))

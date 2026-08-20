@@ -140,6 +140,20 @@ pub async fn group_offsets(
 }
 
 #[tauri::command]
+pub async fn reset_group_offset(
+    state: tauri::State<'_, AppState>,
+    id: String,
+    group: String,
+    to_earliest: bool,
+) -> ConnectorResult<()> {
+    state
+        .get(&id)
+        .await?
+        .reset_group_offset(&group, to_earliest)
+        .await
+}
+
+#[tauri::command]
 pub async fn create_stream(
     state: tauri::State<'_, AppState>,
     id: String,

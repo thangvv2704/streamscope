@@ -461,6 +461,42 @@ impl Connector for KafkaConnector {
         Ok(out)
     }
 
+    async fn reset_group_offset(
+        &self,
+        group: &str,
+        to_earliest: bool,
+    ) -> ConnectorResult<()> {
+        let base = self.base_consumer()?;
+        let meta = base
+            .fetch_metadata(None, Duration::from_secs(5))
+            .map_err(|e| ConnectorError::Connection(e.to_string()))?;
+
+        // Build a TPL with the target offset (low or high watermark) per partition.
+        let mut tpl = TopicPartitionList::new();
+        for t in meta.topics() {
+            if t.name().starts_with("__") {
+                continue;
+            }
+            for p in t.partitions() {
+                let (low, high) = base
+                    .fetch_watermarks(t.name(), p.id(), Duration::from_secs(5))
+                    .unwrap_or((0, 0));
+                let target = if to_earliest { low } else { high };
+                let _ = tpl.add_partition_offset(t.name(), p.id(), Offset::Offset(target));
+            }
+        }
+        if tpl.count() == 0 {
+            return Ok(());
+        }
+
+        // Commit the new offsets as this group.
+        let group_consumer = self.group_consumer(group)?;
+        group_consumer
+            .commit(&tpl, rdkafka::consumer::CommitMode::Sync)
+            .map_err(|e| ConnectorError::Other(e.to_string()))?;
+        Ok(())
+    }
+
     async fn produce(&self, stream: &str, msg: &OutgoingMessage) -> ConnectorResult<()> {
         let producer: ThreadedProducer<DefaultProducerContext> = self
             .client_config()

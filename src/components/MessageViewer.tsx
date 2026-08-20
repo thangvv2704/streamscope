@@ -127,6 +127,40 @@ export function MessageViewer(props: {
     }
   };
 
+  // Export the currently-shown messages to a downloaded file.
+  const download = (content: string, filename: string, mime: string) => {
+    const blob = new Blob([content], { type: mime });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+  const exportJson = () => {
+    download(
+      JSON.stringify(shown, null, 2),
+      `${props.stream}.json`,
+      "application/json"
+    );
+  };
+  const exportCsv = () => {
+    const esc = (s: string) => `"${(s ?? "").replace(/"/g, '""')}"`;
+    const rows = [
+      ["partition", "offset", "timestamp", "key", "value"].join(","),
+      ...shown.map((m) =>
+        [
+          m.partition,
+          m.offset,
+          m.timestamp ?? "",
+          esc(m.key ?? ""),
+          esc(m.value ?? ""),
+        ].join(",")
+      ),
+    ];
+    download(rows.join("\n"), `${props.stream}.csv`, "text/csv");
+  };
+
   return (
     <>
       {/* Row 1: topic title + info */}
@@ -142,6 +176,24 @@ export function MessageViewer(props: {
           <InfoIcon size={15} />
         </button>
         <div className="spacer" />
+        {shown.length > 0 && (
+          <>
+            <button
+              onClick={exportJson}
+              title="Export shown messages as JSON"
+              style={{ height: 28, padding: "0 10px" }}
+            >
+              Export JSON
+            </button>
+            <button
+              onClick={exportCsv}
+              title="Export shown messages as CSV"
+              style={{ height: 28, padding: "0 10px" }}
+            >
+              CSV
+            </button>
+          </>
+        )}
         <span className="count-pill">
           {shown.length}/{props.messages.length}
         </span>

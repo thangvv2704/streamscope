@@ -44,6 +44,9 @@ export const api = {
   groupOffsets: (id: string, group: string) =>
     invoke<GroupOffset[]>("group_offsets", { id, group }),
 
+  resetGroupOffset: (id: string, group: string, toEarliest: boolean) =>
+    invoke<void>("reset_group_offset", { id, group, toEarliest }),
+
   createStream: (id: string, spec: CreateTopicSpec) =>
     invoke<void>("create_stream", { id, spec }),
 
