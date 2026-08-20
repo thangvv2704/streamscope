@@ -10,7 +10,8 @@ use std::time::Duration;
 
 use async_trait::async_trait;
 use rdkafka::admin::{
-    AdminClient, AdminOptions, NewTopic, ResourceSpecifier, TopicReplication,
+    AdminClient, AdminOptions, AlterConfig, NewTopic, ResourceSpecifier,
+    TopicReplication,
 };
 use rdkafka::client::DefaultClientContext;
 use rdkafka::config::ClientConfig;
@@ -549,6 +550,28 @@ impl Connector for KafkaConnector {
         for r in res {
             r.map_err(|(name, e)| {
                 ConnectorError::Other(format!("{}: {}", name, e))
+            })?;
+        }
+        Ok(())
+    }
+
+    async fn set_stream_config(
+        &self,
+        name: &str,
+        entries: &[(String, String)],
+    ) -> ConnectorResult<()> {
+        let admin = self.admin_client()?;
+        let mut cfg = AlterConfig::new(ResourceSpecifier::Topic(name));
+        for (k, v) in entries {
+            cfg = cfg.set(k, v);
+        }
+        let res = admin
+            .alter_configs(&[cfg], &AdminOptions::new())
+            .await
+            .map_err(|e| ConnectorError::Other(e.to_string()))?;
+        for r in res {
+            r.map_err(|(res, e)| {
+                ConnectorError::Other(format!("{:?}: {}", res, e))
             })?;
         }
         Ok(())

@@ -52,4 +52,7 @@ export const api = {
 
   deleteStream: (id: string, stream: string) =>
     invoke<void>("delete_stream", { id, stream }),
+
+  setStreamConfig: (id: string, stream: string, entries: [string, string][]) =>
+    invoke<void>("set_stream_config", { id, stream, entries }),
 };

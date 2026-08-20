@@ -25,6 +25,7 @@ pub fn run() {
             commands::reset_group_offset,
             commands::create_stream,
             commands::delete_stream,
+            commands::set_stream_config,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

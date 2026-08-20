@@ -110,4 +110,13 @@ pub trait Connector: Send + Sync {
     async fn delete_stream(&self, _name: &str) -> ConnectorResult<()> {
         Err(ConnectorError::Unsupported("delete stream".to_string()))
     }
+
+    /// Set (alter) configuration entries on a stream/topic.
+    async fn set_stream_config(
+        &self,
+        _name: &str,
+        _entries: &[(String, String)],
+    ) -> ConnectorResult<()> {
+        Err(ConnectorError::Unsupported("set stream config".to_string()))
+    }
 }

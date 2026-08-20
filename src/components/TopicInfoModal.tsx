@@ -12,6 +12,32 @@ export function TopicInfoModal(props: {
   const [detail, setDetail] = useState<StreamDetail | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [configFilter, setConfigFilter] = useState("");
+  const [edits, setEdits] = useState<Record<string, string>>({});
+  const [saving, setSaving] = useState(false);
+  const [saveMsg, setSaveMsg] = useState<string | null>(null);
+
+  const saveConfig = async () => {
+    const entries = Object.entries(edits);
+    if (entries.length === 0) return;
+    setSaving(true);
+    setSaveMsg(null);
+    try {
+      await api.setStreamConfig(
+        props.connId,
+        props.stream,
+        entries as [string, string][]
+      );
+      setSaveMsg("Saved ✓");
+      setEdits({});
+      // Refresh to show applied values.
+      const d = await api.describeStream(props.connId, props.stream);
+      setDetail(d);
+    } catch (e) {
+      setSaveMsg(`${e}`);
+    } finally {
+      setSaving(false);
+    }
+  };
 
   useEffect(() => {
     let alive = true;
@@ -108,8 +134,29 @@ export function TopicInfoModal(props: {
                 <tbody>
                   {configs.map(([k, v]) => (
                     <tr key={k}>
-                      <td style={{ color: "var(--text-dim)" }}>{k}</td>
-                      <td style={{ fontFamily: "var(--mono)" }}>{v}</td>
+                      <td style={{ color: "var(--text-dim)", width: "45%" }}>
+                        {k}
+                      </td>
+                      <td>
+                        <input
+                          value={edits[k] ?? v}
+                          onChange={(e) =>
+                            setEdits((prev) => ({
+                              ...prev,
+                              [k]: e.target.value,
+                            }))
+                          }
+                          style={{
+                            height: 26,
+                            fontFamily: "var(--mono)",
+                            fontSize: 11,
+                            borderColor:
+                              edits[k] != null && edits[k] !== v
+                                ? "var(--accent)"
+                                : undefined,
+                          }}
+                        />
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -119,8 +166,26 @@ export function TopicInfoModal(props: {
         )}
 
         <div className="modal-actions">
-          <button className="primary" onClick={props.onClose}>
-            Close
+          {saveMsg && (
+            <span
+              style={{
+                fontSize: 12,
+                color: saveMsg.startsWith("Saved")
+                  ? "var(--green)"
+                  : "var(--red)",
+                marginRight: "auto",
+              }}
+            >
+              {saveMsg}
+            </span>
+          )}
+          <button onClick={props.onClose}>Close</button>
+          <button
+            className="primary"
+            onClick={saveConfig}
+            disabled={saving || Object.keys(edits).length === 0}
+          >
+            {saving ? "Saving…" : "Save config"}
           </button>
         </div>
       </div>

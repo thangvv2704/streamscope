@@ -154,6 +154,20 @@ pub async fn reset_group_offset(
 }
 
 #[tauri::command]
+pub async fn set_stream_config(
+    state: tauri::State<'_, AppState>,
+    id: String,
+    stream: String,
+    entries: Vec<(String, String)>,
+) -> ConnectorResult<()> {
+    state
+        .get(&id)
+        .await?
+        .set_stream_config(&stream, &entries)
+        .await
+}
+
+#[tauri::command]
 pub async fn create_stream(
     state: tauri::State<'_, AppState>,
     id: String,
