@@ -78,9 +78,7 @@ export function ConnectionModal(props: {
             <option value="kafka">Kafka</option>
             <option value="redis">Redis</option>
             <option value="rabbitmq">RabbitMQ</option>
-            <option value="nats" disabled>
-              NATS (coming soon)
-            </option>
+            <option value="nats">NATS (JetStream)</option>
           </select>
         </div>
 
@@ -96,6 +94,8 @@ export function ConnectionModal(props: {
                 ? "localhost:6379"
                 : protocol === "rabbitmq"
                 ? "localhost:15672 (management API)"
+                : protocol === "nats"
+                ? "localhost:4222"
                 : "host:9092,host2:9092"
             }
           />
